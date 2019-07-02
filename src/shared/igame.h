@@ -83,6 +83,7 @@ namespace game
     extern const char *defaultcrosshair(int index);
     extern int selectcrosshair(vec &col);
     extern void setupcamera();
+    extern bool allowthirdperson();
     extern bool detachcamera();
     extern bool collidecamera();
     extern void adddynlights();
