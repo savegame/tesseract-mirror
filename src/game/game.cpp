@@ -659,6 +659,18 @@ namespace game
         return tempformatstring("\fs%s%s%s%s\fr", teamtextcode[team], prefix, teamnames[team], suffix);
     }
 
+    VARP(teamsounds, 0, 1, 1);
+
+    void teamsound(bool sameteam, int n, const vec *loc)
+    {
+        playsound(n, loc, NULL, teamsounds ? (m_teammode && sameteam ? SND_USE_ALT : SND_NO_ALT) : 0);
+    }
+
+    void teamsound(gameent *d, int n, const vec *loc)
+    {
+        teamsound(isteam(d->team, player1->team), n, loc);
+    }
+
     void suicide(physent *d)
     {
         if(d==player1 || (d->type==ENT_PLAYER && ((gameent *)d)->ai))

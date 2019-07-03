@@ -558,7 +558,7 @@ struct ctfclientmode : clientmode
             f.interptime = 0;
         }
         conoutf(CON_GAMEINFO, "%s dropped %s", teamcolorname(d), teamcolorflag(f));
-        playsound(S_FLAGDROP);
+        teamsound(d, S_FLAGDROP);
     }
 
     void flagexplosion(int i, int team, const vec &loc)
@@ -592,7 +592,7 @@ struct ctfclientmode : clientmode
         f.interptime = 0;
         returnflag(i);
         conoutf(CON_GAMEINFO, "%s returned %s", teamcolorname(d), teamcolorflag(f));
-        playsound(S_FLAGRETURN);
+        teamsound(d, S_FLAGRETURN);
     }
 
     void resetflag(int i, int version)
@@ -604,7 +604,7 @@ struct ctfclientmode : clientmode
         f.interptime = 0;
         returnflag(i);
         conoutf(CON_GAMEINFO, "%s reset", teamcolorflag(f));
-        playsound(S_FLAGRESET);
+        teamsound(f.team == player1->team, S_FLAGRESET);
     }
 
     void scoreflag(gameent *d, int relay, int relayversion, int goal, int goalversion, int team, int score, int dflags)
@@ -643,7 +643,7 @@ struct ctfclientmode : clientmode
         if(f.droptime) conoutf(CON_GAMEINFO, "%s picked up %s", teamcolorname(d), teamcolorflag(f));
         else conoutf(CON_GAMEINFO, "%s stole %s", teamcolorname(d), teamcolorflag(f));
         ownflag(i, d, lastmillis);
-        playsound(S_FLAGPICKUP);
+        teamsound(d, S_FLAGPICKUP);
     }
 
     void checkitems(gameent *d)
