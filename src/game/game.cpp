@@ -291,10 +291,12 @@ namespace game
 
     // inputs
 
+    VARP(attackspawn, 0, 1, 1);
+
     void doaction(int act)
     {
         if(!connected || intermission) return;
-        if((player1->attacking = act)) respawn();
+        if((player1->attacking = act) && attackspawn) respawn();
     }
 
     ICOMMAND(shoot, "D", (int *down), doaction(*down ? ACT_SHOOT : ACT_IDLE));
