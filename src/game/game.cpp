@@ -654,7 +654,7 @@ namespace game
 
     const char *teamcolorname(gameent *d, const char *alt)
     {
-        if(!teamcolortext || !m_teammode || !validteam(d->team)) return colorname(d, NULL, alt);
+        if(!teamcolortext || !m_teammode || !validteam(d->team) || d->state == CS_SPECTATOR) return colorname(d, NULL, alt);
         return colorname(d, NULL, alt, teamtextcode[d->team]);
     }
 
