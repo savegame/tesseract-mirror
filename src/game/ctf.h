@@ -650,14 +650,32 @@ struct ctfclientmode : clientmode
     {
         if(d->state!=CS_ALIVE) return;
         vec o = d->feetpos();
+        bool tookflag = false;
         loopv(flags)
         {
             flag &f = flags[i];
-            if(!validteam(f.team) || f.owner || (f.droptime && f.droploc.x<0)) continue;
+            if(!validteam(f.team) || f.team==player1->team || f.owner || (f.droptime && f.droploc.x<0)) continue;
             const vec &loc = f.droptime ? f.droploc : f.spawnloc;
             if(o.dist(loc) < FLAGRADIUS)
             {
                 if(d->flagpickup&(1<<f.id)) continue;
+                if((lookupmaterial(o)&MATF_CLIP) != MAT_GAMECLIP && (lookupmaterial(loc)&MATF_CLIP) != MAT_GAMECLIP)
+                {
+                    tookflag = true;
+                    addmsg(N_TAKEFLAG, "rcii", d, i, f.version);
+                }
+                d->flagpickup |= 1<<f.id;
+            }
+            else d->flagpickup &= ~(1<<f.id);
+        }
+        loopv(flags)
+        {
+            flag &f = flags[i];
+            if(!validteam(f.team) || f.team!=player1->team || f.owner || (f.droptime && f.droploc.x<0)) continue;
+            const vec &loc = f.droptime ? f.droploc : f.spawnloc;
+            if(o.dist(loc) < FLAGRADIUS)
+            {
+                if(!tookflag && d->flagpickup&(1<<f.id)) continue;
                 if((lookupmaterial(o)&MATF_CLIP) != MAT_GAMECLIP && (lookupmaterial(loc)&MATF_CLIP) != MAT_GAMECLIP)
                     addmsg(N_TAKEFLAG, "rcii", d, i, f.version);
                 d->flagpickup |= 1<<f.id;
