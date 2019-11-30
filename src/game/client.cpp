@@ -969,7 +969,8 @@ namespace game
         }
     }
 
-    const char *chatcolorname(gameent *d) { return teamcolorname(d, NULL); }
+    VARP(teamcolorchat, 0, 1, 1);
+    const char *chatcolorname(gameent *d) { return teamcolorchat ? teamcolorname(d, NULL) : colorname(d); }
 
     void toserver(char *text) { conoutf(CON_CHAT, "%s:%s %s", chatcolorname(player1), teamtextcode[0], text); addmsg(N_TEXT, "rcs", player1, text); }
     COMMANDN(say, toserver, "C");
