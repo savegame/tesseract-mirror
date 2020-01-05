@@ -154,10 +154,40 @@ void stopmusic()
     DELETEP(musicstream);
 }
 
-VARF(sound, 0, 1, 1, initwarning("sound configuration", INIT_RESET, CHANGE_SOUND));
+#ifdef WIN32
+#define AUDIODRIVER "directsound winmm"
+#else
+#define AUDIODRIVER ""
+#endif
+bool shouldinitaudio = true;
+SVARF(audiodriver, AUDIODRIVER, { shouldinitaudio = true; initwarning("sound configuration", INIT_RESET, CHANGE_SOUND); });
+VARF(sound, 0, 1, 1, { shouldinitaudio = true; initwarning("sound configuration", INIT_RESET, CHANGE_SOUND); });
 VARF(soundchans, 1, 32, 128, initwarning("sound configuration", INIT_RESET, CHANGE_SOUND));
 VARF(soundfreq, 0, 44100, 48000, initwarning("sound configuration", INIT_RESET, CHANGE_SOUND));
 VARF(soundbufferlen, 128, 1024, 4096, initwarning("sound configuration", INIT_RESET, CHANGE_SOUND));
+
+bool initaudio()
+{
+    if(audiodriver[0])
+    {
+        vector<char*> drivers;
+        explodelist(audiodriver, drivers);
+        loopv(drivers)
+        {
+            SDL_setenv("SDL_AUDIODRIVER", drivers[i], 1);
+            if(SDL_InitSubSystem(SDL_INIT_AUDIO) >= 0)
+            {
+                drivers.deletearrays();
+                return true;
+            }
+        }
+        drivers.deletearrays();
+    }
+    SDL_setenv("SDL_AUDIODRIVER", "", 1);
+    if(SDL_InitSubSystem(SDL_INIT_AUDIO) >= 0) return true;
+    conoutf(CON_ERROR, "sound init failed: %s", SDL_GetError());
+    return false;
+}
 
 void initsound()
 {
@@ -170,10 +200,21 @@ void initsound()
         return;
     }
 
-    if(!sound || Mix_OpenAudio(soundfreq, MIX_DEFAULT_FORMAT, 2, soundbufferlen)<0)
+    if(shouldinitaudio)
+    {
+        shouldinitaudio = false;
+        if(SDL_WasInit(SDL_INIT_AUDIO)) SDL_QuitSubSystem(SDL_INIT_AUDIO);
+        if(!sound || !initaudio())
+        {
+            nosound = true;
+            return;
+        }
+    }
+
+    if(Mix_OpenAudio(soundfreq, MIX_DEFAULT_FORMAT, 2, soundbufferlen)<0)
     {
         nosound = true;
-        if(sound) conoutf(CON_ERROR, "sound init failed (SDL_mixer): %s", Mix_GetError());
+        conoutf(CON_ERROR, "sound init failed (SDL_mixer): %s", Mix_GetError());
         return;
     }
     Mix_AllocateChannels(soundchans);
