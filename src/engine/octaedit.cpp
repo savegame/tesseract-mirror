@@ -183,6 +183,8 @@ void toggleedit(bool force)
     execident("edittoggled");
 }
 
+VARP(editinview, 0, 1, 1);
+
 bool noedit(bool view, bool msg)
 {
     if(!editmode) { if(msg) conoutf(CON_ERROR, "operation only allowed in edit mode"); return true; }
@@ -192,8 +194,9 @@ bool noedit(bool view, bool msg)
     o.add(s);
     float r = max(s.x, s.y, s.z);
     bool viewable = (isvisiblesphere(r, o) != VFC_NOT_VISIBLE);
-    if(!viewable && msg) conoutf(CON_ERROR, "selection not in view");
-    return !viewable;
+    if(viewable || !editinview) return false;
+    if(msg) conoutf(CON_ERROR, "selection not in view");
+    return true;
 }
 
 void reorient()
@@ -233,6 +236,29 @@ ICOMMAND(selmoved, "", (), { if(noedit(true)) return; intret(sel.o != savedsel.o
 ICOMMAND(selsave, "", (), { if(noedit(true)) return; savedsel = sel; });
 ICOMMAND(selrestore, "", (), { if(noedit(true)) return; sel = savedsel; });
 ICOMMAND(selswap, "", (), { if(noedit(true)) return; swap(sel, savedsel); });
+
+ICOMMAND(getselpos, "", (),
+{
+    if(noedit(true)) return;
+    defformatstring(pos, "%s %s %s", floatstr(sel.o.x), floatstr(sel.o.y), floatstr(sel.o.z));
+    result(pos);
+});
+
+void setselpos(int *x, int *y, int *z)
+{
+    if(noedit(moving!=0)) return;
+    havesel = true;
+    sel.o = ivec(*x, *y, *z).mask(~(gridsize-1));
+}
+COMMAND(setselpos, "iii");
+
+void movesel(int *dir, int *dim)
+{
+    if(noedit(moving!=0)) return;
+    if(*dim < 0 || *dim > 2) return;
+    sel.o[*dim] += *dir * sel.grid;
+}
+COMMAND(movesel, "ii");
 
 ///////// selection support /////////////
 
