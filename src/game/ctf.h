@@ -696,9 +696,9 @@ struct ctfclientmode : clientmode
        }
     }
 
-    int respawnwait(gameent *d)
+    int respawnwait(gameent *d, int delay = 0)
     {
-        return max(0, RESPAWNSECS-(lastmillis-d->lastpain)/1000);
+        return d->respawnwait(RESPAWNSECS, delay);
     }
 
     bool aihomerun(gameent *d, ai::aistate &b)
