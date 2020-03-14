@@ -4056,8 +4056,8 @@ DIVCMD(modf, f, float, val = fmod(val, val2));
 MATHCMD("pow", f, float, val = pow(val, val2), 0, );
 
 ICOMMAND(round, "ff", (float *a, float *b), floatret(*b ? round(*a / *b) * *b : round(*a)));
-ICOMMAND(floor, "ff", (float *a), floatret(floor(*a));
-ICOMMAND(ceil, "ff", (float *a), floatret(ceil(*a));
+ICOMMAND(floor, "ff", (float *a), floatret(floor(*a)));
+ICOMMAND(ceil, "ff", (float *a), floatret(ceil(*a)));
 ICOMMAND(sin, "f", (float *a), floatret(sin(*a*RAD)));
 ICOMMAND(cos, "f", (float *a), floatret(cos(*a*RAD)));
 ICOMMAND(tan, "f", (float *a), floatret(tan(*a*RAD)));
