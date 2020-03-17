@@ -550,7 +550,7 @@ struct ctfclientmode : clientmode
         f.version = version;
         f.interploc = interpflagpos(f, f.interpangle);
         f.interptime = lastmillis;
-        dropflag(i, droploc, d->yaw, 1);
+        dropflag(i, droploc, d->yaw, lastmillis);
         d->flagpickup |= 1<<f.id;
         if(!droptofloor(f.droploc.addz(4), 4, 0))
         {
