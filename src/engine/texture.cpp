@@ -2254,6 +2254,7 @@ const struct slottex
     {"g", TEX_GLOW},
     {"s", TEX_SPEC},
     {"z", TEX_DEPTH},
+    {"a", TEX_ALPHA},
     {"e", TEX_ENVMAP}
 };
 
@@ -2460,6 +2461,22 @@ static void mergedepth(ImageData &c, ImageData &z)
     );
 }
 
+static void mergealpha(ImageData &c, ImageData &s)
+{
+    if(s.bpp < 3)
+    {
+        readwritergbatex(c, s,
+            dst[3] = src[0];
+        );
+    }
+    else
+    {
+        readwritergbatex(c, s,
+            dst[3] = src[3];
+        );
+    }
+}
+
 static void collapsespec(ImageData &s)
 {
     ImageData d(s.w, s.h, 1);
@@ -2478,8 +2495,8 @@ int Slot::cancombine(int type) const
 {
     switch(type)
     {
-        case TEX_DIFFUSE: return TEX_SPEC;
-        case TEX_NORMAL: return TEX_DEPTH;
+        case TEX_DIFFUSE: return texmask&((1<<TEX_SPEC)|(1<<TEX_NORMAL)) ? TEX_SPEC : TEX_ALPHA;
+        case TEX_NORMAL: return texmask&(1<<TEX_DEPTH) ? TEX_DEPTH : TEX_ALPHA;
         default: return -1;
     }
 }
@@ -2550,6 +2567,7 @@ void Slot::load(int index, Slot::Tex &t)
                     {
                         case TEX_SPEC: mergespec(ts, cs); break;
                         case TEX_DEPTH: mergedepth(ts, cs); break;
+                        case TEX_ALPHA: mergealpha(ts, cs); break;
                     }
                 }
             }
