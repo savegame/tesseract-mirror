@@ -519,7 +519,8 @@ struct ctfclientmode : clientmode
                 flag &f = flags[i];
                 f.version = version;
                 f.owner = owner>=0 ? (owner==player1->clientnum ? player1 : newclient(owner)) : NULL;
-                f.droptime = dropped;
+                f.owntime = owner>=0 ? lastmillis : 0;
+                f.droptime = dropped ? lastmillis : 0;
                 f.droploc = dropped ? droploc : f.spawnloc;
                 f.interptime = 0;
 
