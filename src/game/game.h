@@ -523,7 +523,7 @@ namespace game
     extern void teamsound(gameent *d, int n, const vec *loc = NULL);
     extern gameent *pointatplayer();
     extern gameent *hudplayer();
-    extern gameent *followingplayer();
+    extern gameent *followingplayer(gameent *fallback = NULL);
     extern void stopfollowing();
     extern void checkfollow();
     extern void nextfollow(int dir = 1);
