@@ -445,7 +445,7 @@ namespace game
     void updateprojectiles(int time)
     {
         if(projs.empty()) return;
-        gameent *noside = hudplayer();
+        gameent *noside = followingplayer(player1);
         loopv(projs)
         {
             projectile &p = projs[i];
@@ -538,7 +538,7 @@ namespace game
                 break;
         }
 
-        if(d==hudplayer()) playsound(attacks[atk].hudsound, NULL);
+        if(d == followingplayer(player1)) playsound(attacks[atk].hudsound, NULL);
         else playsound(attacks[atk].sound, &d->o);
     }
 
@@ -564,7 +564,7 @@ namespace game
         gameent *pl = (gameent *)owner;
         if(pl->muzzle.x < 0 || pl->lastattack < 0 || attacks[pl->lastattack].gun != pl->gunselect) return;
         o = pl->muzzle;
-        hud = owner == hudplayer() ? vec(pl->o).add(vec(0, 0, 2)) : pl->muzzle;
+        hud = owner == followingplayer(player1) ? vec(pl->o).add(vec(0, 0, 2)) : pl->muzzle;
     }
 
     float intersectdist = 1e16f;

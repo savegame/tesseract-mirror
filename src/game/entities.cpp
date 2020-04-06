@@ -132,7 +132,7 @@ namespace entities
         ents[n]->clearspawned();
         if(!d) return;
         itemstat &is = itemstats[type-I_FIRST];
-        fpsent *h = hudplayer();
+        gameent *h = followingplayer(player1);
         if(d!=h || isthirdperson())
         {
             //particle_text(d->abovehead(), is.name, PART_TEXT, 2000, 0xFFC864, 4.0f, -8);
@@ -157,12 +157,9 @@ namespace entities
             {
                 int snd = S_TELEPORT, flags = 0;
                 if(e.attr4 > 0) { snd = e.attr4; flags = SND_MAP; }
-                if(d == hudplayer()) playsound(snd, NULL, NULL, flags);
-                else
-                {
-                    playsound(snd, &e.o, NULL, flags);
-                    if(ents.inrange(td) && ents[td]->type == TELEDEST) playsound(snd, &ents[td]->o, NULL, flags);
-                }
+                gameent *h = followingplayer(player1);
+                playsound(snd, d==h ? NULL : &e.o, NULL, flags);
+                if(d!=h && ents.inrange(td) && ents[td]->type == TELEDEST) playsound(snd, &ents[td]->o, NULL, flags);
             }
         }
         if(local && d->clientnum >= 0)
@@ -187,7 +184,7 @@ namespace entities
             {
                 int snd = S_JUMPPAD, flags = 0;
                 if(e.attr4 > 0) { snd = e.attr4; flags = SND_MAP; }
-                playsound(snd, d == hudplayer() ? NULL : &e.o, NULL, flags);
+                playsound(snd, d == followingplayer(player1) ? NULL : &e.o, NULL, flags);
             }
         }
         if(local && d->clientnum >= 0)
