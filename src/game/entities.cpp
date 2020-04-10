@@ -127,9 +127,11 @@ namespace entities
     {
 #if 0
         if(!ents.inrange(n)) return;
-        int type = ents[n]->type;
+        extentity *e = ents[n];
+        int type = e->type;
         if(!validitem(type)) return;
-        ents[n]->clearspawned();
+        e->clearspawned();
+        e->clearnopickup();
         if(!d) return;
         itemstat &is = itemstats[type-I_FIRST];
         gameent *h = followingplayer(player1);
@@ -233,26 +235,27 @@ namespace entities
 
     void trypickup(int n, gameent *d)
     {
-        switch(ents[n]->type)
+        extentity *e = ents[n];
+        switch(e->type)
         {
             default:
-                if(d->canpickup(ents[n]->type))
+                if(d->canpickup(e->type))
                 {
                     addmsg(N_ITEMPICKUP, "rci", d, n);
-                    ents[n]->clearspawned(); // even if someone else gets it first
+                    e->setnopickup(); // even if someone else gets it first
                 }
                 break;
 
             case TELEPORT:
             {
-                if(d->lastpickup==ents[n]->type && lastmillis-d->lastpickupmillis<500) break;
+                if(d->lastpickup==e->type && lastmillis-d->lastpickupmillis<500) break;
                 if(!teleteam && m_teammode) break;
-                if(ents[n]->attr3 > 0)
+                if(e->attr3 > 0)
                 {
-                    defformatstring(hookname, "can_teleport_%d", ents[n]->attr3);
+                    defformatstring(hookname, "can_teleport_%d", e->attr3);
                     if(!execidentbool(hookname, true)) break;
                 }
-                d->lastpickup = ents[n]->type;
+                d->lastpickup = e->type;
                 d->lastpickupmillis = lastmillis;
                 teleport(n, d);
                 break;
@@ -260,15 +263,15 @@ namespace entities
 
             case JUMPPAD:
             {
-                if(d->lastpickup==ents[n]->type && lastmillis-d->lastpickupmillis<300) break;
-                d->lastpickup = ents[n]->type;
+                if(d->lastpickup==e->type && lastmillis-d->lastpickupmillis<300) break;
+                d->lastpickup = e->type;
                 d->lastpickupmillis = lastmillis;
                 jumppadeffects(d, n, true);
                 if(d->ai) d->ai->becareful = true;
                 d->falling = vec(0, 0, 0);
                 d->physstate = PHYS_FALL;
                 d->timeinair = 1;
-                d->vel = vec(ents[n]->attr3*10.0f, ents[n]->attr2*10.0f, ents[n]->attr1*12.5f);
+                d->vel = vec(e->attr3*10.0f, e->attr2*10.0f, e->attr1*12.5f);
                 break;
             }
         }
@@ -282,7 +285,7 @@ namespace entities
         {
             extentity &e = *ents[i];
             if(e.type==NOTUSED) continue;
-            if(!e.spawned() && e.type!=TELEPORT && e.type!=JUMPPAD) continue;
+            if((!e.spawned() || e.nopickup()) && e.type!=TELEPORT && e.type!=JUMPPAD) continue;
             float dist = e.o.dist(o);
             if(dist<(e.type==TELEPORT ? 16 : 12)) trypickup(i, d);
         }
@@ -299,17 +302,22 @@ namespace entities
         putint(p, -1);
     }
 
-    void resetspawns() { loopv(ents) ents[i]->clearspawned(); }
+    void resetspawns() { loopv(ents) { extentity *e = ents[i]; e->clearspawned(); e->clearnopickup(); } }
 
     void spawnitems(bool force)
     {
-        loopv(ents) if(validitem(ents[i]->type))
+        loopv(ents)
         {
-            ents[i]->setspawned(force || !server::delayspawn(ents[i]->type));
+            extentity *e = ents[i];
+            if(validitem(e->type))
+            {
+                e->setspawned(force || !server::delayspawn(e->type));
+                e->clearnopickup();
+            }
         }
     }
 
-    void setspawn(int i, bool on) { if(ents.inrange(i)) ents[i]->setspawned(on); }
+    void setspawn(int i, bool on) { if(ents.inrange(i)) { extentity *e = ents[i]; e->setspawned(on); e->clearnopickup(); } }
 
     extentity *newentity() { return new gameentity(); }
     void deleteentity(extentity *e) { delete (gameentity *)e; }
