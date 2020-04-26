@@ -629,6 +629,8 @@ void initlights()
     loaddeferredlightshaders();
 }
 
+extern int useskytexture;
+
 void lightreaching(const vec &target, vec &color, vec &dir, bool fast, extentity *t, float minambient)
 {
     if(fullbright && editmode)
@@ -679,7 +681,7 @@ void lightreaching(const vec &target, vec &color, vec &dir, bool fast, extentity
         color.add(vec(lightcol).mul(intensity));
         dir.add(vec(ray).mul(-intensity*lightcol.x*lightcol.y*lightcol.z));
     }
-    if(!sunlight.iszero() && shadowray(target, sunlightdir, 1e16f, RAY_SHADOW | RAY_POLY, t) > 1e15f)
+    if(!sunlight.iszero() && shadowray(target, sunlightdir, 1e16f, RAY_SHADOW | RAY_POLY | RAY_SKIPSKY | (useskytexture ? RAY_SKYTEX : 0), t) > 1e15f)
     {
         vec lightcol = sunlight.tocolor().mul(sunlightscale);
         color.add(lightcol);
