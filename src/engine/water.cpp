@@ -396,12 +396,12 @@ void preloadwatershaders(bool force)
 
 static float wfwave = 0.0f;
 
-static void renderwaterfall(const materialsurface &m, float offset, const vec &normal)
+static void renderwaterfall(const materialsurface &m, float offset)
 {
     if(gle::attribbuf.empty())
     {
         gle::defvertex();
-        gle::defnormal();
+        gle::defnormal(4, GL_BYTE);
         gle::begin(GL_QUADS);
     }
     float x = m.o.x, y = m.o.y, zmin = m.o.z, zmax = zmin;
@@ -415,7 +415,7 @@ static void renderwaterfall(const materialsurface &m, float offset, const vec &n
     #define GENFACEVERT(orient, vert, mx,my,mz, sx,sy,sz) \
         { \
             gle::attribf(mx sx, my sy, mz sz); \
-            gle::attribf(normal.x, normal.y, normal.z); \
+            gle::attrib(matnormals[orient]); \
         }
         GENFACEVERTSXY(x, x, y, y, zmin, zmax, /**/, + csize, /**/, + rsize, + offset, - offset)
     #undef GENFACEORIENT
@@ -484,7 +484,7 @@ void renderlava()
             loopv(surfs)
             {
                 materialsurface &m = surfs[i];
-                renderwaterfall(m, 0.1f, matnormals[m.orient]);
+                renderwaterfall(m, 0.1f);
             }
             xtraverts += gle::end();
         }
@@ -536,7 +536,7 @@ void renderwaterfalls()
         loopv(surfs)
         {
             materialsurface &m = surfs[i];
-            renderwaterfall(m, 0.1f, matnormals[m.orient]);
+            renderwaterfall(m, 0.1f);
         }
         xtraverts += gle::end();
     }
