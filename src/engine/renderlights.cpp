@@ -1552,7 +1552,8 @@ extern int smminradius;
 
 struct lightinfo
 {
-    int ent, shadowmap, flags;
+    int ent, shadowmap;
+    ushort flags, batched;
     vec o, color;
     float radius, dist;
     vec dir, spotx, spoty;
@@ -1561,8 +1562,8 @@ struct lightinfo
     occludequery *query;
     
     lightinfo() {}
-    lightinfo(const vec &o, const vec &color, float radius, int flags = 0, const vec &dir = vec(0, 0, 0), int spot = 0)
-      : ent(-1), shadowmap(-1), flags(flags),
+    lightinfo(const vec &o, const vec &color, float radius, ushort flags = 0, const vec &dir = vec(0, 0, 0), int spot = 0)
+      : ent(-1), shadowmap(-1), flags(flags), batched(~0),
         o(o), color(color), radius(radius), dist(camera1->o.dist(o)),
         dir(dir), spot(spot), query(NULL)
     {
@@ -1570,7 +1571,7 @@ struct lightinfo
         calcscissor();
     }
     lightinfo(int i, const extentity &e)
-      : ent(i), shadowmap(-1), flags(e.attr5),
+      : ent(i), shadowmap(-1), flags(e.attr5), batched(~0),
         o(e.o), color(vec(e.attr2, e.attr3, e.attr4).max(0)), radius(e.attr1), dist(camera1->o.dist(e.o)),
         dir(0, 0, 0), spot(0), query(NULL)
     {
@@ -1966,6 +1967,7 @@ struct cascadedshadowmap
     matrix4 model;                // model view is shared by all splits
     splitinfo splits[CSM_MAXSPLITS]; // per-split parameters
     vec lightview;                  // view vector for light
+    bool rendered;
     void setup();                   // insert shadowmaps for each split frustum if there is sunlight
     void updatesplitdist();         // compute split frustum distances
     void getmodelmatrix();          // compute the shared model matrix
@@ -2841,7 +2843,7 @@ static inline void setlightglobals(bool transparent = false)
     else
         GLOBALPARAMF(lightscale, ambient.x*lightscale*ambientscale, ambient.y*lightscale*ambientscale, ambient.z*lightscale*ambientscale, 255*lightscale);
 
-    if(!sunlight.iszero() && csmshadowmap)
+    if(csm.rendered)
     {
         csm.bindparams();
         rh.bindparams();
@@ -2903,7 +2905,8 @@ static inline void setlightparams(int i, const lightinfo &l)
 
 static inline void setlightshader(Shader *s, int n, bool baselight, bool shadowmap, bool spotlight, bool transparent = false, bool avatar = false)
 {
-    s->setvariant(n-1, (shadowmap ? 1 : 0) + (baselight ? 0 : 2) + (spotlight ? 4 : 0) + (transparent ? 8 : 0) + (avatar ? 24 : 0));
+    int variant = (shadowmap ? 1 : 0) + (baselight ? 0 : 2) + (spotlight ? 4 : 0) + (transparent ? 8 : (avatar ? 24 : 0));
+    s->setvariant(n - (variant&7 ? 1 : 0), variant);
     lightpos.setv(lightposv, n);
     lightcolor.setv(lightcolorv, n);
     if(spotlight) spotparams.setv(spotparamsv, n);
@@ -2925,7 +2928,7 @@ static void rendersunpass(Shader *s, int stencilref, bool transparent, float bsx
 
     int tx1 = max(int(floor((bsx1*0.5f+0.5f)*vieww)), 0), ty1 = max(int(floor((bsy1*0.5f+0.5f)*viewh)), 0),
         tx2 = min(int(ceil((bsx2*0.5f+0.5f)*vieww)), vieww), ty2 = min(int(ceil((bsy2*0.5f+0.5f)*viewh)), viewh);
-    s->setvariant(transparent ? 0 : -1, 16);
+    s->setvariant(0, transparent ? 8 : 0);
     lightquad(-1, (tx1*2.0f)/vieww-1.0f, (ty1*2.0f)/viewh-1.0f, (tx2*2.0f)/vieww-1.0f, (ty2*2.0f)/viewh-1.0f, tilemask);
     lightpassesused++;
 
@@ -2933,7 +2936,7 @@ static void rendersunpass(Shader *s, int stencilref, bool transparent, float bsx
     {
         setavatarstencil(stencilref, true);
 
-        s->setvariant(0, 17);
+        s->setvariant(0, 24);
         lightquad(-1, (tx1*2.0f)/vieww-1.0f, (ty1*2.0f)/viewh-1.0f, (tx2*2.0f)/vieww-1.0f, (ty2*2.0f)/viewh-1.0f, tilemask);
         lightpassesused++;
 
@@ -3009,9 +3012,8 @@ static void renderlightsnobatch(Shader *s, int stencilref, bool transparent, flo
     lightsphere::disable();
 }
 
-static void renderlightbatches(Shader *s, int stencilref, bool transparent, float bsx1, float bsy1, float bsx2, float bsy2, const uint *tilemask)
+static void renderlightbatches(Shader *s, int stencilref, bool transparent, float bsx1, float bsy1, float bsx2, float bsy2, const uint *tilemask, bool sunpass)
 {
-    bool sunpass = !sunlight.iszero() && csmshadowmap && batchsunlight <= (gi && giscale && gidist ? 1 : 0);
     int btx1, bty1, btx2, bty2;
     calctilebounds(bsx1, bsy1, bsx2, bsy2, btx1, bty1, btx2, bty2);
     loopv(lightbatches)
@@ -3041,7 +3043,7 @@ static void renderlightbatches(Shader *s, int stencilref, bool transparent, floa
             bool shadowmap = !(batch.flags & BF_NOSHADOW), spotlight = (batch.flags & BF_SPOTLIGHT) != 0;
             setlightshader(s, n, baselight, shadowmap, spotlight, transparent);
         }
-        else s->setvariant(transparent ? 0 : -1, 16);
+        else s->setvariant(0, transparent ? 8 : 0);
 
         lightpassesused++;
 
@@ -3089,7 +3091,7 @@ static void renderlightbatches(Shader *s, int stencilref, bool transparent, floa
             }
 
             if(n) setlightshader(s, n, baselight, shadowmap, spotlight, false, true);
-            else s->setvariant(0, 17);
+            else s->setvariant(0, 24);
 
             if(hasDBT && depthtestlights > 1) glDepthBounds_(sz1*0.5f + 0.5f, min(sz2*0.5f + 0.5f, depthtestlightsclamp));
             lightquad(sz1, sx1, sy1, sx2, sy2, tilemask);
@@ -3157,7 +3159,7 @@ void renderlights(float bsx1 = -1, float bsy1 = -1, float bsx2 = 1, float bsy2 =
 
     if(hasDBT && depthtestlights > 1) glEnable(GL_DEPTH_BOUNDS_TEST_EXT);
 
-    bool sunpass = !lighttilebatch || drawtex == DRAWTEX_MINIMAP || (!sunlight.iszero() && csmshadowmap && batchsunlight <= (gi && giscale && gidist ? 1 : 0));
+    bool sunpass = !lighttilebatch || drawtex == DRAWTEX_MINIMAP || (csm.rendered && batchsunlight <= (gi && giscale && gidist ? 1 : 0));
     if(sunpass)
     {
         if(depthtestlights && depth) { glDisable(GL_DEPTH_TEST); depth = false; }
@@ -3172,7 +3174,7 @@ void renderlights(float bsx1 = -1, float bsy1 = -1, float bsx2 = 1, float bsy2 =
     }
     else
     {
-        renderlightbatches(s, stencilref, transparent, bsx1, bsy1, bsx2, bsy2, tilemask);
+        renderlightbatches(s, stencilref, transparent, bsx1, bsy1, bsx2, bsy2, tilemask, sunpass);
     }
 
     if(msaapass == 1 && ghasstencil)
@@ -3706,6 +3708,7 @@ void packlights()
                 shadowmaps[l.shadowmap].light = -1;
                 l.shadowmap = -1;
             }
+            l.batched = ~0;
             lightsoccluded++;
             continue;
         }
@@ -3729,12 +3732,11 @@ void packlights()
             else if(smcache) shadowcachefull = true;
         }
 
+        l.batched = batchrects.length();
         batchrects.add(batchrect(l, i));
     }
 
     lightsvisible = lightorder.length() - lightsoccluded;
-
-    batchlights();
 }
 
 static inline void nogiquad(int x, int y, int w, int h)
@@ -4222,7 +4224,12 @@ void renderradiancehints()
 void rendercsmshadowmaps()
 {
     if(csminoq && !debugshadowatlas && !inoq && shouldworkinoq()) return;
+
+    csm.rendered = false;
+
     if(sunlight.iszero() || !csmshadowmap) return;
+
+    csm.rendered = true;
 
     if(inoq)
     {
@@ -4504,6 +4511,8 @@ void rendershadowatlas()
 
     // point lights
     rendershadowmaps(smoffset);
+
+    batchlights();
 
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
