@@ -516,6 +516,8 @@ struct vacollect : verthash
         va->ebuf = 0;
         va->edata = 0;
         va->eoffset = 0;
+        va->texmask = 0;
+        va->dyntexs = 0;
         if(va->texs)
         {
             va->texelems = new elementset[va->texs];
@@ -552,18 +554,13 @@ struct vacollect : verthash
                 else if(k.alpha==ALPHA_BACK) { va->texs--; va->tris -= e.length/3; va->alphaback++; va->alphabacktris += e.length/3; }
                 else if(k.alpha==ALPHA_FRONT) { va->texs--; va->tris -= e.length/3; va->alphafront++; va->alphafronttris += e.length/3; }
                 else if(k.alpha==ALPHA_REFRACT) { va->texs--; va->tris -= e.length/3; va->refract++; va->refracttris += e.length/3; }
-            }
-        }
 
-        va->texmask = 0;
-        va->dyntexs = 0;
-        loopi(va->texs+va->blends+va->alphaback+va->alphafront+va->refract)
-        {
-            VSlot &vslot = lookupvslot(va->texelems[i].texture, false);
-            if(vslot.isdynamic()) va->dyntexs++;
-            Slot &slot = *vslot.slot;
-            loopvj(slot.sts) va->texmask |= 1<<slot.sts[j].type;
-            if(slot.shader->type&SHADER_ENVMAP) va->texmask |= 1<<TEX_ENVMAP;
+                VSlot &vslot = lookupvslot(k.tex, false);
+                if(vslot.isdynamic()) va->dyntexs++;
+                Slot &slot = *vslot.slot;
+                loopvj(slot.sts) va->texmask |= 1<<slot.sts[j].type;
+                if(slot.shader->type&SHADER_ENVMAP) va->texmask |= 1<<TEX_ENVMAP;
+            }
         }
 
         va->decalbuf = 0;
