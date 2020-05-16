@@ -644,10 +644,10 @@ void renderoutline()
             drawvatris(va, 3*va->tris, 0);
             xtravertsva += va->verts;
         }
-        if(va->alphaback || va->alphafront || va->refract)
+        if(va->alphatris)
         {
-            drawvatris(va, 3*(va->alphabacktris + va->alphafronttris + va->refracttris), 3*(va->tris + va->blendtris));
-            xtravertsva += 3*(va->alphabacktris + va->alphafronttris + va->refracttris);
+            drawvatris(va, 3*va->alphatris, 3*(va->tris + va->blendtris));
+            xtravertsva += 3*va->alphatris;
         }
 
         prev = va;
@@ -1624,7 +1624,7 @@ void renderzpass(renderstate &cur, vtxarray *va)
     {
         firsttex += va->texs + va->blends;
         offset += 3*(va->tris + va->blendtris);
-        numtris = va->alphabacktris + va->alphafronttris + va->refracttris;
+        numtris = va->alphatris;
         xtravertsva += 3*numtris;
     }
     else xtravertsva += va->verts;
@@ -1951,7 +1951,7 @@ int findalphavas()
     alphafrontsx2 = alphafrontsy2 = alphabacksx2 = alphabacksy2 = alpharefractsx2 = alpharefractsy2 = -1;
     alphabackvas = alpharefractvas = 0;
     memset(alphatiles, 0, sizeof(alphatiles));
-    for(vtxarray *va = visibleva; va; va = va->next) if(va->alphabacktris || va->alphafronttris || va->refracttris)
+    for(vtxarray *va = visibleva; va; va = va->next) if(va->alphatris)
     {
         if(va->occluded >= OCCLUDE_BB) continue;
         if(va->occluded >= OCCLUDE_GEOM && pvsoccluded(va->alphamin, va->alphamax)) continue;

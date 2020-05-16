@@ -563,6 +563,8 @@ struct vacollect : verthash
             }
         }
 
+        va->alphatris = va->alphabacktris + va->alphafronttris + va->refracttris;
+
         va->decalbuf = 0;
         va->decaldata = 0;
         va->decaloffset = 0;
@@ -1153,7 +1155,7 @@ vtxarray *newva(const ivec &o, int size)
 
     vc.setupdata(va);
 
-    if(va->alphafronttris || va->alphabacktris || va->refracttris)
+    if(va->alphatris)
     {
         va->alphamin = ivec(vec(vc.alphamin).mul(8)).shr(3);
         va->alphamax = ivec(vec(vc.alphamax).mul(8)).add(7).shr(3);
@@ -1175,7 +1177,7 @@ vtxarray *newva(const ivec &o, int size)
     va->nogimax = vc.nogimax;
 
     wverts += va->verts;
-    wtris  += va->tris + va->blends + va->alphabacktris + va->alphafronttris + va->refracttris + va->decaltris;
+    wtris  += va->tris + va->blends + va->alphatris + va->decaltris;
     allocva++;
     valist.add(va);
 
@@ -1185,7 +1187,7 @@ vtxarray *newva(const ivec &o, int size)
 void destroyva(vtxarray *va, bool reparent)
 {
     wverts -= va->verts;
-    wtris -= va->tris + va->blends + va->alphabacktris + va->alphafronttris + va->refracttris + va->decaltris;
+    wtris -= va->tris + va->blends + va->alphatris + va->decaltris;
     allocva--;
     valist.removeobj(va);
     if(!va->parent) varoot.removeobj(va);
