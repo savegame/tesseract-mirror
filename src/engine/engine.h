@@ -279,7 +279,7 @@ extern int shadowmapping;
 
 extern vec shadoworigin, shadowdir;
 extern float shadowradius, shadowbias;
-extern int shadowside, shadowspot;
+extern int shadowside, shadowspot, shadowtransparent;
 extern matrix4 shadowmatrix;
 
 extern void loaddeferredlightshaders();
@@ -289,10 +289,11 @@ extern void clearshadowcache();
 extern void rendervolumetric();
 extern void cleanupvolumetric();
 
-extern void findshadowvas();
+extern void findshadowvas(bool transparent = false);
 extern void findshadowmms();
 
 extern int calcshadowinfo(const extentity &e, vec &origin, float &radius, vec &spotloc, int &spotangle, float &bias);
+extern int dynamicshadowvas();
 extern int dynamicshadowvabounds(int mask, vec &bbmin, vec &bbmax);
 extern void rendershadowmapworld();
 extern void batchshadowmapmodels(bool skipmesh = false);
@@ -432,6 +433,7 @@ extern void rendergeom();
 extern int findalphavas();
 extern void renderrefractmask();
 extern void renderalphageom(int side);
+extern void renderalphashadow();
 extern void rendermapmodels();
 extern void renderoutline();
 extern void cleanupva();

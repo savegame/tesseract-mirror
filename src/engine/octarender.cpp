@@ -518,6 +518,7 @@ struct vacollect : verthash
         va->eoffset = 0;
         va->texmask = 0;
         va->dyntexs = 0;
+        va->dynalphatexs = 0;
         if(va->texs)
         {
             va->texelems = new elementset[va->texs];
@@ -556,7 +557,11 @@ struct vacollect : verthash
                 else if(k.alpha==ALPHA_REFRACT) { va->texs--; va->tris -= e.length/3; va->refract++; va->refracttris += e.length/3; }
 
                 VSlot &vslot = lookupvslot(k.tex, false);
-                if(vslot.isdynamic()) va->dyntexs++;
+                if(vslot.isdynamic())
+                {
+                    va->dyntexs++;
+                    if(k.alpha) va->dynalphatexs++;
+                }
                 Slot &slot = *vslot.slot;
                 loopvj(slot.sts) va->texmask |= 1<<slot.sts[j].type;
                 if(slot.shader->type&SHADER_ENVMAP) va->texmask |= 1<<TEX_ENVMAP;
