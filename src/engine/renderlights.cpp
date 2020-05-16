@@ -1786,7 +1786,7 @@ void setupshadowatlas()
     {
         if(!shadowcolortex) glGenTextures(1, &shadowcolortex);
 
-        GLenum colcomp = smalphaprec > 1 ? GL_RGB10 : (smalphaprec ? GL_RGB5 : GL_R3_G3_B2);
+        GLenum colcomp = smalphaprec > 1 ? GL_RGB10 : (smalphaprec ? (hasES2 ? GL_RGB565 : GL_RGB5) : GL_R3_G3_B2);
         createtexture(shadowcolortex, shadowatlaspacker.w, shadowatlaspacker.h, NULL, 3, 1, colcomp, GL_TEXTURE_RECTANGLE);
 
         if(!shadowblanktex) glGenTextures(1, &shadowblanktex);
@@ -1879,7 +1879,7 @@ VARFP(smgather, 0, 0, 1, { cleardeferredlightshaders(); cleanupshadowatlas(); cl
 VAR(smnoshadow, 0, 0, 1);
 VAR(smdynshadow, 0, 1, 1);
 VARF(smalpha, 0, 2, 2, { cleardeferredlightshaders(); cleanupshadowatlas(); });
-VARF(smalphaprec, 0, 0, 2, cleanupshadowatlas());
+VARFP(smalphaprec, 0, 0, 2, cleanupshadowatlas());
 VAR(lightpassesused, 1, 0, 0);
 VAR(lightsvisible, 1, 0, 0);
 VAR(lightsoccluded, 1, 0, 0);

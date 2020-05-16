@@ -2877,7 +2877,7 @@ Texture *cubemaploadwildcard(Texture *t, const char *name, bool mipit, bool msg,
         component = compressedformat(format, t->w, t->h, compress);
         switch(component)
         {
-            case GL_RGB: component = GL_RGB5; break;
+            case GL_RGB: component = hasES2 ? GL_RGB565 : GL_RGB5; break;
         }
     }
     glGenTextures(1, &t->id);
@@ -2982,7 +2982,7 @@ GLuint genenvmap(const vec &o, int envmapsize, int blur, bool onlysky)
     glGenTextures(1, &tex);
     // workaround for Catalyst bug:
     // all texture levels must be specified before glCopyTexSubImage2D is called, otherwise it crashes
-    loopi(6) createtexture(!i ? tex : 0, texsize, texsize, NULL, 3, 2, GL_RGB5, cubemapsides[i].target);
+    loopi(6) createtexture(!i ? tex : 0, texsize, texsize, NULL, 3, 2, hasES2 ? GL_RGB565 : GL_RGB5, cubemapsides[i].target);
     float yaw = 0, pitch = 0;
     loopi(6)
     {
