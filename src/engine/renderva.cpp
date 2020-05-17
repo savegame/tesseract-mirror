@@ -1460,9 +1460,11 @@ static void changeslottmus(renderstate &cur, int pass, Slot &slot, VSlot &vslot)
         changecolorparams:
             cur.colorscale = vslot.colorscale;
             if(pass == RENDERPASS_SMALPHA)
-                GLOBALPARAMF(colorparams, vslot.colorscale.x, vslot.colorscale.y, vslot.colorscale.z, alpha);
-            else
-                GLOBALPARAMF(colorparams, alpha*vslot.colorscale.x, alpha*vslot.colorscale.y, alpha*vslot.colorscale.z, alpha);
+            {
+                extern float alphashadowscale;
+                GLOBALPARAMF(colorparams, alphashadowscale*vslot.colorscale.x, alphashadowscale*vslot.colorscale.y, alphashadowscale*vslot.colorscale.z, alpha);
+            }
+            else GLOBALPARAMF(colorparams, alpha*vslot.colorscale.x, alpha*vslot.colorscale.y, alpha*vslot.colorscale.z, alpha);
         }
         if(cur.alphaing > 1 && vslot.refractscale > 0 && (cur.refractscale != vslot.refractscale || cur.refractcolor != vslot.refractcolor))
         {
