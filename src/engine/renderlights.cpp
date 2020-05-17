@@ -2476,7 +2476,7 @@ void disableavatarmask()
 
 VAR(forcespotlights, 1, 0, 0);
 
-extern int spotlights;
+extern int spotlights, volumetricsmalphalights;
 
 static Shader *volumetricshader = NULL, *volumetricbilateralshader[2] = { NULL, NULL };
 
@@ -2496,10 +2496,12 @@ Shader *loadvolumetricshader()
 
     if(usegatherforsm()) common[commonlen++] = smfilter > 2 ? 'G' : 'g';
     else if(smfilter) common[commonlen++] = smfilter > 2 ? 'E' : (smfilter > 1 ? 'F' : 'f');
+    else common[commonlen++] = 'N';
     if(spotlights || forcespotlights) common[commonlen++] = 's';
     common[commonlen] = '\0';
 
     shadow[shadowlen++] = 'p';
+    if(smalpha > 1 && alphashadow && volumetricsmalphalights) shadow[shadowlen++] = 'P';
     shadow[shadowlen] = '\0';
 
     defformatstring(name, "volumetric%s%s%d", common, shadow, volsteps);
@@ -2576,7 +2578,7 @@ void cleardeferredlightshaders()
     deferredmsaasampleshader = NULL;
 }
 
-extern int nospeclights;
+extern int nospeclights, smalphalights;
 
 Shader *loaddeferredlightshader(const char *type = NULL)
 {
@@ -2604,12 +2606,13 @@ Shader *loaddeferredlightshader(const char *type = NULL)
     }
     if(usegatherforsm()) common[commonlen++] = smfilter > 2 ? 'G' : 'g';
     else if(smfilter) common[commonlen++] = smfilter > 2 ? 'E' : (smfilter > 1 ? 'F' : 'f');
+    else common[commonlen++] = 'N';
     if(spotlights || forcespotlights) common[commonlen++] = 's';
     if(nospeclights) common[commonlen++] = 'z';
     common[commonlen] = '\0';
 
     shadow[shadowlen++] = 'p';
-    if(smalpha > 1 && alphashadow) shadow[shadowlen++] = 'P';
+    if(smalpha > 1 && alphashadow > (smalphalights ? 0 : 1)) shadow[shadowlen++] = 'P';
     shadow[shadowlen] = '\0';
 
     int usecsm = 0, userh = 0;
@@ -3317,6 +3320,11 @@ void rendervolumetric()
     glActiveTexture_(GL_TEXTURE4);
     glBindTexture(shadowatlastarget, shadowatlastex);
     if(usesmcomparemode()) setsmcomparemode(); else setsmnoncomparemode();
+    if(smalpha > 1 && alphashadow && volumetricsmalphalights)
+    {
+        glActiveTexture_(GL_TEXTURE11);
+        glBindTexture(GL_TEXTURE_RECTANGLE, smfilter ? shadowfiltertex : shadowcolortex);
+    }
     glActiveTexture_(GL_TEXTURE0);
 
     GLOBALPARAMF(shadowatlasscale, 1.0f/shadowatlaspacker.w, 1.0f/shadowatlaspacker.h);
@@ -3346,12 +3354,13 @@ void rendervolumetric()
         lightmatrix.scale(l.radius*lightradiustweak);
         GLOBALPARAM(lightmatrix, lightmatrix);
 
+        bool colorshadow = l.colorshadow() && l.shadowmap >= 0 && shadowmaps[l.shadowmap].transparent;
         if(l.spot > 0)
         {
-            volumetricshader->setvariant(0, l.shadowmap >= 0 ? 2 : 1);
+            volumetricshader->setvariant(0, l.shadowmap >= 0 ? (colorshadow ? 4 : 3) : 2);
             LOCALPARAM(spotparams, vec4(l.dir, 1/(1 - cos360(l.spot))));
         }
-        else if(l.shadowmap >= 0) volumetricshader->setvariant(0, 0);
+        else if(l.shadowmap >= 0) volumetricshader->setvariant(0, colorshadow ? 1 : 0);
         else volumetricshader->set();
 
         LOCALPARAM(lightpos, vec4(l.o, 1).div(l.radius));
