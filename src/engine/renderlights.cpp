@@ -254,6 +254,7 @@ VARFP(aobilateralupscale, 0, 0, 1, cleanupao());
 VARF(aopackdepth, 0, 1, 1, cleanupao());
 VARFP(aotaps, 1, 5, 12, cleanupao());
 VARF(aoderivnormal, 0, 0, 1, cleanupao());
+VAR(aoderiv, -1, 1, 1);
 VAR(debugao, 0, 0, 1);
 
 void initao()
@@ -320,7 +321,10 @@ void renderao()
     LOCALPARAMF(contrastparams, (2.0f*aodark)/aotaps, aosharp);
     LOCALPARAMF(offsetscale, xscale/eyematrix.d.z, yscale/eyematrix.d.z, eyematrix.d.x/eyematrix.d.z, eyematrix.d.y/eyematrix.d.z);
     LOCALPARAMF(prefilterdepth, aoprefilterdepth);
+
+    if(aoderiv >= 0) glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT, aoderiv ? GL_NICEST : GL_FASTEST);
     screenquad(vieww, viewh, aow/float(1<<aonoise), aoh/float(1<<aonoise));
+    if(aoderiv >= 0) glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT, GL_DONT_CARE);
 
     if(aobilateral)
     {
@@ -2567,6 +2571,7 @@ FVAR(volprefilter, 0, 4, 1e3f);
 FVAR(voldistclamp, 0, 0.99f, 2);
 CVAR1R(volcolour, 0x808080);
 FVARR(volscale, 0, 1, 16);
+VAR(volderiv, -1, 1, 1);
 
 static Shader *deferredlightshader = NULL, *deferredminimapshader = NULL, *deferredmsaapixelshader = NULL, *deferredmsaasampleshader = NULL;
 
@@ -3343,6 +3348,8 @@ void rendervolumetric()
 
     glEnable(GL_SCISSOR_TEST);
 
+    if(volderiv >= 0) glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT, volderiv ? GL_NICEST : GL_FASTEST);
+
     bool outside = true;
     loopv(lightorder)
     {
@@ -3422,6 +3429,8 @@ void rendervolumetric()
     }
 
     lightsphere::disable();
+
+    if(volderiv >= 0) glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT, GL_DONT_CARE);
 
     if(depthtestlights)
     {
