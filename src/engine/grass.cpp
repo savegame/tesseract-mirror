@@ -7,6 +7,7 @@ FVARP(grasstaper, 0, 0.2, 1);
 FVARP(grassstep, 0.5, 3, 8);
 VARP(grassheight, 1, 4, 64);
 VARP(grassmargin, 0, 8, 32);
+FVAR(grassmarginfade, 0, 1, 1);
 
 #define NUMGRASSWEDGES 8
 
@@ -300,7 +301,7 @@ void rendergrass()
     gle::enablequads();
 
     GLOBALPARAMF(grasstest, grasstest);
-    GLOBALPARAMF(grassmargin, grassmargin, grassmargin ? 1.0f / grassmargin : 0.0f);
+    GLOBALPARAMF(grassmargin, grassmargin, grassmargin ? grassmarginfade / grassmargin : 0.0f, grassmargin ? grassmarginfade : 1.0f);
 
     int texid = -1, blend = -1;
     loopv(grassgroups)
