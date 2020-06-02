@@ -379,7 +379,6 @@ FVARR(atmosundiskbright, 0, 1, 16);
 FVARR(atmohaze, 0, 0.1f, 1);
 CVAR0R(atmohazefade, 0xAEACA9);
 FVARR(atmohazefadescale, 0, 1, 1);
-FVARR(atmoclarity, 0, 1, 10);
 FVARR(atmodensity, 1e-3f, 1, 1e3f);
 FVARR(atmoalpha, 0, 1, 1);
 
@@ -412,9 +411,9 @@ static void drawatmosphere()
     LOCALPARAMF(mie, 1 + gm*gm, -2*gm);
 
     vec lambda(680e-9f, 550e-9f, 450e-9f),
-        betar = vec(lambda).square().square().recip().mul(1.86e-31f / atmodensity),
-        betam = vec(lambda).recip().mul(2*M_PI).square().mul(atmohazefade.tocolor().mul(atmohazefadescale)).mul(1.36e-19f * max(atmohaze, 1e-3f)),
-        betarm = vec(betar).div(1+atmoclarity).add(betam);
+        betar = vec(lambda).square().square().recip().mul(1.24e-31f * atmodensity),
+        betam = vec(lambda).recip().mul(2*M_PI).square().mul(atmohazefade.tocolor().mul(atmohazefadescale)).mul(0.952e-19f * max(atmohaze, 1e-3f)),
+        betarm = vec(betar).add(betam);
     betar.div(betarm).mul(3/(16*M_PI));
     betam.div(betarm).mul((1-gm)*(1-gm)/(4*M_PI));
     LOCALPARAM(betar, betar);
