@@ -374,12 +374,11 @@ FVARR(atmoheight, 1e-3f, 1, 1e3f);
 FVARR(atmobright, 0, 3, 16);
 CVAR1R(atmosunlight, 0);
 FVARR(atmosunlightscale, 0, 1, 16);
-FVARR(atmosundisksize, 0, 1, 10);
+FVARR(atmosundisksize, 0, 1, 16);
 FVARR(atmosundiskbright, 0, 1, 16);
-FVARR(atmohaze, 0, 0.1f, 1);
-CVAR0R(atmohazefade, 0xAEACA9);
-FVARR(atmohazefadescale, 0, 1, 1);
-FVARR(atmodensity, 1e-3f, 1, 1e3f);
+FVARR(atmohaze, 0, 0.1f, 16);
+FVARR(atmodensity, 0, 1, 16);
+FVARR(atmoozone, 0, 1, 16);
 FVARR(atmoalpha, 0, 1, 1);
 
 static void drawatmosphere()
@@ -401,17 +400,20 @@ static void drawatmosphere()
     sundiskparams.z = atmosundiskbright;
     LOCALPARAM(sundiskparams, sundiskparams);
 
-    const float earthradius = 6.371e6f, earthatmoheight = 0.1e6f;
+    const float earthradius = 6371e3f, earthatmoheight = 8.4e3f;
     float planetradius = earthradius*atmoplanetsize, atmoradius = planetradius + earthatmoheight*atmoheight;
     LOCALPARAMF(atmoradius, planetradius, atmoradius*atmoradius, atmoradius*atmoradius - planetradius*planetradius);
 
     float gm = (1 - atmohaze)*0.2f + 0.75f;
     LOCALPARAMF(mie, 1 + gm*gm, -2*gm);
 
-    vec lambda(680e-9f, 550e-9f, 450e-9f),
-        betar = vec(lambda).square().square().recip().mul(1.24e-31f * atmodensity),
-        betam = vec(lambda).recip().mul(2*M_PI).square().mul(atmohazefade.tocolor().mul(atmohazefadescale)).mul(0.952e-19f * max(atmohaze, 1e-3f)),
-        betarm = vec(betar).add(betam);
+    static const vec lambda(680e-9f, 550e-9f, 450e-9f),
+                     k(0.686f, 0.678f, 0.666f),
+                     ozone(3.426f, 8.298f, 0.356f);
+    vec betar = vec(lambda).square().square().recip().mul(1.241e-30f * atmodensity),
+        betam = vec(lambda).recip().square().mul(k).mul(1.350e-17f * atmohaze),
+        betao = vec(ozone).mul(0.06e-5f*atmoozone),
+        betarm = vec(betar).add(betam).add(betao);
     betar.div(betarm).mul(3/(16*M_PI));
     betam.div(betarm).mul((1-gm)*(1-gm)/(4*M_PI));
     LOCALPARAM(betar, betar);
