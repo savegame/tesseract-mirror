@@ -371,7 +371,7 @@ void cleanupsky()
 VARR(atmo, 0, 0, 1);
 FVARR(atmoplanetsize, 1e-3f, 1, 1e3f);
 FVARR(atmoheight, 1e-3f, 1, 1e3f);
-FVARR(atmobright, 0, 3, 16);
+FVARR(atmobright, 0, 4, 16);
 CVAR1R(atmosunlight, 0);
 FVARR(atmosunlightscale, 0, 1, 16);
 FVARR(atmosundisksize, 0, 1, 16);
