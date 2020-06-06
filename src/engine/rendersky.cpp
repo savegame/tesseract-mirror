@@ -403,7 +403,7 @@ static void drawatmosphere()
     float planetradius = earthradius*atmoplanetsize, atmoradius = planetradius + earthatmoheight*atmoheight;
     LOCALPARAMF(opticaldepthoffset, (atmoradius*atmoradius) / (planetradius*planetradius) - 1);
 
-    float gm = (1 - atmohaze)*0.2f + 0.75f;
+    float gm = clamp(0.95f - 0.2f*atmohaze, 0.0f, 1.0f);
     LOCALPARAMF(mie, 1 + gm*gm, -2*gm);
 
     static const vec lambda(680e-9f, 550e-9f, 450e-9f),
