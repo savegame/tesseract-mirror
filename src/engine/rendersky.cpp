@@ -371,11 +371,11 @@ void cleanupsky()
 VARR(atmo, 0, 0, 1);
 FVARR(atmoplanetsize, 1e-3f, 1, 1e3f);
 FVARR(atmoheight, 1e-3f, 1, 1e3f);
-FVARR(atmobright, 0, 4, 16);
+FVARR(atmobright, 0, 1, 16);
 CVAR1R(atmosunlight, 0);
 FVARR(atmosunlightscale, 0, 1, 16);
 FVARR(atmosundisksize, 0, 10, 90);
-FVARR(atmosundiskcorona, 0, 0.2f, 1);
+FVARR(atmosundiskcorona, 0, 0.5f, 1);
 FVARR(atmosundiskbright, 0, 1, 16);
 FVARR(atmohaze, 0, 0.1f, 16);
 FVARR(atmodensity, 0, 1, 16);
@@ -419,26 +419,26 @@ static void drawatmosphere()
     betam.div(betarm).mul((1-gm)*(1-gm)/(4*M_PI));
     // scale extinction distances so that 1 unit = 1 planet radius
     betarm.mul(planetradius);
-    // multiply here to cancel out division by zenith extinction that happens later
-    vec zenithextinction = vec(betarm).mul(-(atmoratio - 1)).exp();
-    LOCALPARAM(betar, vec(betar).mul(zenithextinction));
-    LOCALPARAM(betam, vec(betam).mul(zenithextinction));
+
+    // extinction in direction of sun
+    vec sunextinction = vec(betarm).mul(-sundist).exp();
+    // assume sunlight color is gamma encoded, so decode to linear light
+    extern float hdrgamma;
+    vec suncolor = (!atmosunlight.iszero() ? atmosunlight.tocolor().mul(atmosunlightscale) : sunlight.tocolor().mul(sunlightscale)).mul(ldrscale).pow(hdrgamma).mul(atmobright * 16);
+    suncolor.mul(sunextinction);
+    LOCALPARAM(betar, vec(betar).mul(suncolor));
+    LOCALPARAM(betam, vec(betam).mul(suncolor));
     // further scale extinction distances output from opticaldepth that are in sundist units
     LOCALPARAM(betarm, vec(betarm).mul(sundist/M_LN2));
 
-    // calculate extinction(sundir)/extinction(zenith)
-    extern float hdrgamma;
-    vec sunextinction = vec(betarm).mul(-(sundist - (atmoratio - 1)) / hdrgamma).exp();
-    vec suncolor = (!atmosunlight.iszero() ? atmosunlight.tocolor().mul(atmosunlightscale) : sunlight.tocolor().mul(sunlightscale)).mul(atmobright*ldrscale);
-    LOCALPARAM(sunlight, vec4(suncolor.mul(sunextinction), atmoalpha));
+    // scale extinguished sunlight in ratio to extinction at zenith, then clamp to force saturation
+    vec zenithextinction = vec(betarm).mul(-(atmoratio - 1)).exp();
+    vec diskcolor = vec(suncolor).div(zenithextinction).mul(atmosundiskbright * 2 / (atmobright * 16)).min(1);
+    LOCALPARAM(sunlight, vec4(diskcolor, atmoalpha));
     LOCALPARAM(sundir, sunlightdir);
 
     float sundiskscale = sinf(0.5f*atmosundisksize*RAD);
-    if(sundiskscale > 0)
-    {
-        float brightness = atmosundiskbright / (pow(atmobright, hdrgamma) * max(atmosundiskcorona * atmosundiskcorona, 1e-3f));
-        LOCALPARAMF(sundiskparams, 1.0f/(sundiskscale*sundiskscale), brightness);
-    }
+    if(sundiskscale > 0) LOCALPARAMF(sundiskparams, 1.0f/(sundiskscale*sundiskscale), 1.0f/max(atmosundiskcorona, 1e-3f));
     else LOCALPARAMF(sundiskparams, 0, 0);
 
     gle::defvertex();
