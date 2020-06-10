@@ -439,7 +439,7 @@ static void drawatmosphere()
     vec diskcolor = (!atmosundisk.iszero() ? atmosundisk.tocolor() : suncolor).pow(hdrgamma).mul(zenithextinction).mul(atmosundiskbright * 2);
     static vec lumweights(0.2126, 0.7152, 0.0722);
     float lum = diskcolor.dot(lumweights);
-    diskcolor.mul(min(lum, 1.5f) / lum * pow(ldrscale, hdrgamma));
+    diskcolor.mul(min(lum, 1.5f) / max(lum, 1e-3f) * pow(ldrscale, hdrgamma));
     LOCALPARAM(sunlight, vec4(diskcolor, atmoalpha));
     LOCALPARAM(sundir, sunlightdir);
 
