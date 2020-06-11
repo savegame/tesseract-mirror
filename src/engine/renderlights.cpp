@@ -1308,7 +1308,7 @@ done:
     endtimer(hdrtimer);
 }
 
-void getavglum()
+void getavglum(int *numargs, ident *id)
 {
     if(!bloomfbo[4]) return;
     glBindFramebuffer_(GL_FRAMEBUFFER, bloomfbo[4]);
@@ -1316,10 +1316,13 @@ void getavglum()
     float avglum = -1;
     glReadPixels(0, 0, 1, 1, GL_RED, GL_FLOAT, &avglum);
     glBindFramebuffer_(GL_FRAMEBUFFER, 0);
-    if(avglum >= 0) floatret(4 * avglum);
+    if(avglum < 0) return;
+    avglum *= 4;
+    if(*numargs < 0) floatret(avglum);
+    else printfvar(id, avglum);
 }
 
-COMMANDN(avglum, getavglum, "");
+COMMANDN(avglum, getavglum, "N$");
 
 VAR(debugbloom, 0, 0, 1);
 
