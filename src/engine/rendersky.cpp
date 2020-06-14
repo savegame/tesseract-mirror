@@ -407,30 +407,33 @@ static void drawatmosphere()
     static const vec lambda(680e-9f, 550e-9f, 450e-9f),
                      k(0.686f, 0.678f, 0.666f),
                      ozone(3.426f, 8.298f, 0.356f);
-    vec betar = vec(lambda).square().square().recip().mul(1.241e-30f * atmodensity),
-        betam = vec(lambda).recip().square().mul(k).mul(9.072e-17f * atmohaze),
-        betao = vec(ozone).mul(1.5e-7f*atmoozone);
-    LOCALPARAM(betarayleigh, vec(betar).div(M_LN2));
-    LOCALPARAM(betamie, vec(betam).div(M_LN2));
-    LOCALPARAM(betaozone, vec(betao).div(M_LN2));
+    vec betar = vec(lambda).square().square().recip().mul(1.241e-30f/M_LN2 * atmodensity),
+        betam = vec(lambda).recip().square().mul(k).mul(9.072e-17f/M_LN2 * atmohaze),
+        betao = vec(ozone).mul(1.5e-7f/M_LN2 * atmoozone);
+    LOCALPARAM(betarayleigh, betar);
+    LOCALPARAM(betamie, betam);
+    LOCALPARAM(betaozone, betao);
 
     // extinction in direction of sun
     float sunoffset = sunlightdir.z*planetradius;
     vec sundepth = vec(atmoshells).add(sunoffset*sunoffset).sqrt().sub(sunoffset);
     vec sunweight = vec(betar).mul(sundepth.x).madd(betam, sundepth.y).madd(betao, sundepth.z - sundepth.x);
-    vec sunextinction = vec(sunweight).neg().exp();
+    vec sunextinction = vec(sunweight).neg().exp2();
     vec suncolor = !atmosunlight.iszero() ? atmosunlight.tocolor().mul(atmosunlightscale) : sunlight.tocolor().mul(sunlightscale);
     // assume sunlight color is gamma encoded, so decode to linear light, then apply extinction
     extern float hdrgamma;
     vec sunscale = vec(suncolor).mul(ldrscale).pow(hdrgamma).mul(atmobright * 16).mul(sunextinction);
-    LOCALPARAM(sunweight, vec(sunweight).div(M_LN2).add(1e-5f).min(127.0f));
+    float maxsunweight = max(max(sunweight.x, sunweight.y), sunweight.z);
+    if(maxsunweight > 127) sunweight.mul(127/maxsunweight);
+    sunweight.add(1e-5);
+    LOCALPARAM(sunweight, sunweight);
     LOCALPARAM(sunlight, vec4(sunscale, atmoalpha));
     LOCALPARAM(sundir, sunlightdir);
 
     // invert extinction at zenith to get an approximation of how bright the sun disk should be
     vec zenithdepth = vec(atmoshells).add(planetradius*planetradius).sqrt().sub(planetradius);
-    vec zenithweight = vec(betar).mul(zenithdepth.x).madd(betam, zenithdepth.y).madd(betao, zenithdepth.z - zenithdepth.x);
-    vec zenithextinction = vec(zenithweight).sub(sunweight).exp();
+    vec zenithweight = vec(betar).mul(zenithdepth.x).madd(betam, zenithdepth.y).madd(betao, zenithdepth.z - zenithdepth.x).min(10);
+    vec zenithextinction = vec(zenithweight).sub(sunweight).exp2();
     vec diskcolor = (!atmosundisk.iszero() ? atmosundisk.tocolor() : suncolor).mul(ldrscale).pow(hdrgamma).mul(zenithextinction).mul(atmosundiskbright * 3);
     LOCALPARAM(sundiskcolor, diskcolor);
 
