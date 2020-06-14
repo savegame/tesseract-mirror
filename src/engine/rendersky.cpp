@@ -375,7 +375,7 @@ FVARR(atmobright, 0, 1, 16);
 CVAR1R(atmosunlight, 0);
 FVARR(atmosunlightscale, 0, 1, 16);
 CVAR1R(atmosundisk, 0);
-FVARR(atmosundisksize, 0, 15, 90);
+FVARR(atmosundisksize, 0, 12, 90);
 FVARR(atmosundiskcorona, 0, 0.4f, 1);
 FVARR(atmosundiskbright, 0, 1, 16);
 FVARR(atmohaze, 0, 0.1f, 16);
