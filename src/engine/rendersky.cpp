@@ -385,15 +385,7 @@ FVARR(atmoalpha, 0, 1, 1);
 
 static void drawatmosphere()
 {
-    if(sunlightdir.z >= 1.0f/256) SETSHADER(atmosphere);
-    else
-    {
-        SETSHADER(skyfog);
-        gle::colorf(0, 0, 0, atmoalpha);
-        matrix4 skymatrix;
-        skymatrix.identity();
-        LOCALPARAM(skymatrix, skymatrix);
-    }
+    SETSHADER(atmosphere);
 
     matrix4 sunmatrix = invcammatrix;
     sunmatrix.settranslation(0, 0, 0);
@@ -431,7 +423,7 @@ static void drawatmosphere()
     // assume sunlight color is gamma encoded, so decode to linear light, then apply extinction
     extern float hdrgamma;
     vec sunscale = vec(suncolor).mul(ldrscale).pow(hdrgamma).mul(atmobright * 16).mul(sunextinction);
-    LOCALPARAM(sunweight, vec(sunweight).div(M_LN2).add(1e-5f));
+    LOCALPARAM(sunweight, vec(sunweight).div(M_LN2).add(1e-5f).min(127.0f));
     LOCALPARAM(sunlight, vec4(sunscale, atmoalpha));
     LOCALPARAM(sundir, sunlightdir);
 
