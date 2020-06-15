@@ -432,9 +432,9 @@ static void drawatmosphere()
 
     // invert extinction at zenith to get an approximation of how bright the sun disk should be
     vec zenithdepth = vec(atmoshells).add(planetradius*planetradius).sqrt().sub(planetradius);
-    vec zenithweight = vec(betar).mul(zenithdepth.x).madd(betam, zenithdepth.y).madd(betao, zenithdepth.z - zenithdepth.x).min(10);
+    vec zenithweight = vec(betar).mul(zenithdepth.x).madd(betam, zenithdepth.y).madd(betao, zenithdepth.z - zenithdepth.x);
     vec zenithextinction = vec(zenithweight).sub(sunweight).exp2();
-    vec diskcolor = (!atmosundisk.iszero() ? atmosundisk.tocolor() : suncolor).mul(ldrscale).pow(hdrgamma).mul(zenithextinction).mul(atmosundiskbright * 3);
+    vec diskcolor = (!atmosundisk.iszero() ? atmosundisk.tocolor() : suncolor).mul(ldrscale).pow(hdrgamma).mul(zenithextinction).mul(atmosundiskbright * 4);
     LOCALPARAM(sundiskcolor, diskcolor);
 
     // convert from view cosine into mu^2 for limb darkening, where mu = sqrt(1 - sin^2) and sin^2 = 1 - cos^2, thus mu^2 = 1 - (1 - cos^2*scale)
