@@ -827,6 +827,21 @@ namespace game
         return crosshair;
     }
 
+    int maxsoundradius(int n)
+    {
+        switch(n)
+        {
+            case S_JUMP:
+            case S_LAND:
+            case S_WEAPLOAD:
+            case S_ITEMSPAWN:
+            case S_NOAMMO:
+                return 340;
+            default:
+                return 500;
+        }
+    }
+
     const char *mastermodecolor(int n, const char *unknown)
     {
         return (n>=MM_START && size_t(n-MM_START)<sizeof(mastermodecolors)/sizeof(mastermodecolors[0])) ? mastermodecolors[n-MM_START] : unknown;
