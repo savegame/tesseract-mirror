@@ -93,7 +93,6 @@ enum
 {
     M_TEAM       = 1<<0,
     M_CTF        = 1<<1,
-    M_EXTRATIME  = 1<<2,
     M_EDIT       = 1<<3,
     M_DEMO       = 1<<4,
     M_LOCAL      = 1<<5,
@@ -129,7 +128,6 @@ static struct gamemodeinfo
 
 #define m_ctf          (m_check(gamemode, M_CTF))
 #define m_teammode     (m_check(gamemode, M_TEAM))
-#define m_extratime    (m_check(gamemode, M_EXTRATIME))
 #define isteam(a,b)    (m_teammode && a==b)
 #define m_rail         (m_check(gamemode, M_RAIL))
 #define m_pulse        (m_check(gamemode, M_PULSE))
