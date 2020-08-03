@@ -904,6 +904,8 @@ namespace server
         return best;
     }
 
+    VAR(persistteams, 0, 0, 1);
+
     void autoteam()
     {
         vector<clientinfo *> team[MAXTEAMS];
@@ -1945,7 +1947,7 @@ namespace server
         sendf(-1, 1, "risii", N_MAPCHANGE, smapname, gamemode, 1);
 
         clearteaminfo();
-        if(m_teammode) autoteam();
+        if(m_teammode && !persistteams) autoteam();
 
         if(m_ctf) smode = &ctfmode;
         else smode = NULL;
