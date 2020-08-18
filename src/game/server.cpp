@@ -929,12 +929,15 @@ namespace server
             if(!selected) break;
             remaining -= selected;
         }
-        loopi(MAXTEAMS) loopvj(team[i])
+        loopi(MAXTEAMS)
         {
-            clientinfo *ci = team[i][j];
-            if(ci->team == 1+i) continue;
-            ci->team = 1+i;
-            sendf(-1, 1, "riiii", N_SETTEAM, ci->clientnum, ci->team, -1);
+            if(!persistteams) loopvj(team[i])
+            {
+                clientinfo *ci = team[i][j];
+                if(ci->team == 1+i) continue;
+                ci->team = 1+i;
+                sendf(-1, 1, "riiii", N_SETTEAM, ci->clientnum, ci->team, -1);
+            }
         }
     }
 
@@ -1947,7 +1950,7 @@ namespace server
         sendf(-1, 1, "risii", N_MAPCHANGE, smapname, gamemode, 1);
 
         clearteaminfo();
-        if(m_teammode && !persistteams) autoteam();
+        if(m_teammode) autoteam();
 
         if(m_ctf) smode = &ctfmode;
         else smode = NULL;
