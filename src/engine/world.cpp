@@ -1058,6 +1058,8 @@ void attachent()
 
 COMMAND(attachent, "");
 
+VARP(entcamdir, 0, 1, 1);
+
 static int keepents = 0;
 
 extentity *newentity(bool local, const vec &o, int type, int v1, int v2, int v3, int v4, int v5, int &idx, bool fix = true)
@@ -1081,26 +1083,26 @@ extentity *newentity(bool local, const vec &o, int type, int v1, int v2, int v3,
     e.reserved = 0;
     if(local && fix)
     {
-        switch(type)
+        if(entcamdir) switch(type)
         {
-                case ET_DECAL:
-                    if(!e.attr2 && !e.attr3 && !e.attr4)
-                    {
-                        e.attr2 = (int)camera1->yaw;
-                        e.attr3 = (int)camera1->pitch;
-                        e.attr4 = (int)camera1->roll;
-                    }
-                    break;
-                case ET_MAPMODEL:
-                    if(!e.attr2) e.attr2 = (int)camera1->yaw;
-                    break;
-                case ET_PLAYERSTART:
-                    e.attr5 = e.attr4;
-                    e.attr4 = e.attr3;
-                    e.attr3 = e.attr2;
-                    e.attr2 = e.attr1;
-                    e.attr1 = (int)camera1->yaw;
-                    break;
+            case ET_DECAL:
+                if(!e.attr2 && !e.attr3 && !e.attr4)
+                {
+                    e.attr2 = (int)camera1->yaw;
+                    e.attr3 = (int)camera1->pitch;
+                    e.attr4 = (int)camera1->roll;
+                }
+                break;
+            case ET_MAPMODEL:
+                if(!e.attr2) e.attr2 = (int)camera1->yaw;
+                break;
+            case ET_PLAYERSTART:
+                e.attr5 = e.attr4;
+                e.attr4 = e.attr3;
+                e.attr3 = e.attr2;
+                e.attr2 = e.attr1;
+                e.attr1 = (int)camera1->yaw;
+                break;
         }
         entities::fixentity(e);
     }
