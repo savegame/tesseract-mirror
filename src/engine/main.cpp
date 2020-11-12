@@ -356,9 +356,7 @@ void renderprogress(float bar, const char *text, bool background)   // also used
 
     clientkeepalive();      // make sure our connection doesn't time out while loading maps etc.
 
-    #ifdef __APPLE__
     SDL_PumpEvents(); // keep the event queue awake to avoid 'beachball' cursor
-    #endif
 
     int w = hudw, h = hudh;
     if(forceaspect) w = int(ceil(h*forceaspect));
