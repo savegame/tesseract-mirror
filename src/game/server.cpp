@@ -1244,7 +1244,7 @@ namespace server
             gamemillis = offset;
             readdemo();
         }
-        if(!interm) sendf(-1, 1, "ri2", N_TIMEUP, max((gamelimit - gamemillis)/1000, 1));
+        if(gamemillis > prevmillis && !interm) sendf(-1, 1, "ri2", N_TIMEUP, max((gamelimit - gamemillis)/1000, 1));
     }
 
     ICOMMAND(seekdemo, "sN$", (char *t, int *numargs, ident *id),
