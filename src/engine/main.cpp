@@ -371,7 +371,12 @@ void renderprogress(float bar, const char *text, bool background)   // also used
     swapbuffers(false);
 }
 
+#ifdef WIN32
+// SDL_WarpMouseInWindow behaves erratically on Windows, so force relative mouse instead.
+VARN(relativemouse, userelativemouse, 1, 1, 0);
+#else
 VARNP(relativemouse, userelativemouse, 0, 1, 1);
+#endif
 
 bool shouldgrab = false, grabinput = false, minimized = false, canrelativemouse = true, relativemouse = false;
 int keyrepeatmask = 0, textinputmask = 0;
