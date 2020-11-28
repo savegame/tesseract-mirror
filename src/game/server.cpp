@@ -932,10 +932,11 @@ namespace server
         }
         loopi(MAXTEAMS)
         {
-            if(!persistteams) loopvj(team[i])
+            loopvj(team[i])
             {
                 clientinfo *ci = team[i][j];
                 if(ci->team == 1+i) continue;
+                if(persistteams && validteam(ci->team) && (!smode || smode->canchangeteam(ci, 1+i, ci->team))) continue;
                 ci->team = 1+i;
                 sendf(-1, 1, "riiii", N_SETTEAM, ci->clientnum, ci->team, -1);
             }
@@ -1990,11 +1991,11 @@ namespace server
 
         sendf(-1, 1, "risii", N_MAPCHANGE, smapname, gamemode, 1);
 
-        clearteaminfo();
-        if(m_teammode) autoteam();
-
         if(m_ctf) smode = &ctfmode;
         else smode = NULL;
+
+        clearteaminfo();
+        if(m_teammode) autoteam();
 
         if(m_timed && smapname[0]) sendf(-1, 1, "ri2", N_TIMEUP, gamemillis < gamelimit && !interm ? max((gamelimit - gamemillis)/1000, 1) : 0);
         loopv(clients)
