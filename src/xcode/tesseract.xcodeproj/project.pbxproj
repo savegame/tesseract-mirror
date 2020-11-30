@@ -3,17 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		B94198C309207E810029DAD1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		B94198C409207E810029DAD1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2F67ED704C74A3F00A80002 /* OpenGL.framework */; };
-		D10F2F54111E23680004BCB9 /* Launcher.m in Sources */ = {isa = PBXBuildFile; fileRef = B96D0D580920970C00B6C936 /* Launcher.m */; };
-		D10F2F55111E236C0004BCB9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B96D0D6C0920976E00B6C936 /* main.m */; };
-		D10F2F72111E240F0004BCB9 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = B96D0D5A0920971300B6C936 /* MainMenu.nib */; };
 		D10F2F73111E240F0004BCB9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
-		D10F2F74111E240F0004BCB9 /* Maps.icns in Resources */ = {isa = PBXBuildFile; fileRef = B930D0D10A3DA92300BDFB85 /* Maps.icns */; };
 		D1E605B90E2416150045244E /* tesseract.icns in Resources */ = {isa = PBXBuildFile; fileRef = B97E99CE085F4B3E002F9BC6 /* tesseract.icns */; };
 		D1FCB13618832B7500AFC227 /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = D1FCB0CA18832B7500AFC227 /* callbacks.c */; };
 		D1FCB13918832B7500AFC227 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = D1FCB0CD18832B7500AFC227 /* compress.c */; };
@@ -80,26 +76,7 @@
 		D1FCB19418832C7600AFC227 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1FCB18B18832C7600AFC227 /* stream.cpp */; };
 		D1FCB19618832C7600AFC227 /* tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1FCB18D18832C7600AFC227 /* tools.cpp */; };
 		D1FCB19718832C7600AFC227 /* zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1FCB18F18832C7600AFC227 /* zip.cpp */; };
-		D1FCB1981883412700AFC227 /* SDL2_image.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D1FCB17818832BBC00AFC227 /* SDL2_image.framework */; };
-		D1FCB1991883412700AFC227 /* SDL2_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D1FCB17918832BBC00AFC227 /* SDL2_mixer.framework */; };
-		D1FCB19A1883412700AFC227 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D1FCB17A18832BBC00AFC227 /* SDL2.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		B9D19B900FB4C8150020B7FC /* Copy Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				D1FCB1981883412700AFC227 /* SDL2_image.framework in Copy Frameworks */,
-				D1FCB1991883412700AFC227 /* SDL2_mixer.framework in Copy Frameworks */,
-				D1FCB19A1883412700AFC227 /* SDL2.framework in Copy Frameworks */,
-			);
-			name = "Copy Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -107,12 +84,7 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		B2F67ED704C74A3F00A80002 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
-		B930D0D10A3DA92300BDFB85 /* Maps.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Maps.icns; sourceTree = "<group>"; };
 		B94198CB09207E810029DAD1 /* tesseract.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tesseract.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B96D0D570920970C00B6C936 /* Launcher.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Launcher.h; sourceTree = "<group>"; };
-		B96D0D580920970C00B6C936 /* Launcher.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Launcher.m; sourceTree = "<group>"; };
-		B96D0D5B0920971300B6C936 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
-		B96D0D6C0920976E00B6C936 /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B97E99CE085F4B3E002F9BC6 /* tesseract.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = tesseract.icns; sourceTree = "<group>"; };
 		B9CACA12092099DF00A13F04 /* tesseract.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = tesseract.plist; sourceTree = "<group>"; };
 		D1FCB0CA18832B7500AFC227 /* callbacks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = callbacks.c; sourceTree = "<group>"; };
@@ -206,9 +178,9 @@
 		D1FCB13318832B7500AFC227 /* server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = server.cpp; sourceTree = "<group>"; };
 		D1FCB13418832B7500AFC227 /* waypoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = waypoint.cpp; sourceTree = "<group>"; };
 		D1FCB13518832B7500AFC227 /* weapon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = weapon.cpp; sourceTree = "<group>"; };
-		D1FCB17818832BBC00AFC227 /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
-		D1FCB17918832BBC00AFC227 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = Frameworks/SDL2_mixer.framework; sourceTree = "<group>"; };
-		D1FCB17A18832BBC00AFC227 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = Frameworks/SDL2.framework; sourceTree = "<group>"; };
+		D1FCB17818832BBC00AFC227 /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = /Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
+		D1FCB17918832BBC00AFC227 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = /Library/Frameworks/SDL2_mixer.framework; sourceTree = "<group>"; };
+		D1FCB17A18832BBC00AFC227 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = /Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		D1FCB17F18832C7600AFC227 /* command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = command.h; sourceTree = "<group>"; };
 		D1FCB18018832C7600AFC227 /* crypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = crypto.cpp; sourceTree = "<group>"; };
 		D1FCB18118832C7600AFC227 /* cube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cube.h; sourceTree = "<group>"; };
@@ -243,16 +215,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		080E96DDFE201D6D7F000001 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				B96D0D6C0920976E00B6C936 /* main.m */,
-				B96D0D570920970C00B6C936 /* Launcher.h */,
-				B96D0D580920970C00B6C936 /* Launcher.m */,
-			);
-			name = Classes;
-			sourceTree = "<group>";
-		};
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -286,7 +248,6 @@
 			isa = PBXGroup;
 			children = (
 				D1FCB0C818832B4D00AFC227 /* Sources */,
-				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -297,10 +258,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B930D0D10A3DA92300BDFB85 /* Maps.icns */,
 				B9CACA12092099DF00A13F04 /* tesseract.plist */,
 				B97E99CE085F4B3E002F9BC6 /* tesseract.icns */,
-				B96D0D5A0920971300B6C936 /* MainMenu.nib */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 			);
 			name = Resources;
@@ -491,15 +450,13 @@
 				B94198A709207E810029DAD1 /* Sources */,
 				B94198C209207E810029DAD1 /* Frameworks */,
 				B94198A409207E810029DAD1 /* Resources */,
-				B9D19B900FB4C8150020B7FC /* Copy Frameworks */,
-				B94199400920820E0029DAD1 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = tesseract;
-			productInstallPath = "$(HOME)/Applications";
+			productInstallPath = "$(HOME)/Desktop/tesseract";
 			productName = tesseract;
 			productReference = B94198CB09207E810029DAD1 /* tesseract.app */;
 			productType = "com.apple.product-type.application";
@@ -513,14 +470,12 @@
 				LastUpgradeCheck = 0420;
 			};
 			buildConfigurationList = B960CF35085F3CC7004FB142 /* Build configuration list for PBXProject "tesseract" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
-				Japanese,
-				French,
-				German,
+                en,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* tesseract */;
 			projectDirPath = "";
@@ -536,39 +491,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D10F2F72111E240F0004BCB9 /* MainMenu.nib in Resources */,
 				D1E605B90E2416150045244E /* tesseract.icns in Resources */,
 				D10F2F73111E240F0004BCB9 /* InfoPlist.strings in Resources */,
-				D10F2F74111E240F0004BCB9 /* Maps.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		B94199400920820E0029DAD1 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "echo build dir = $TARGET_BUILD_DIR\ncd \"$TARGET_BUILD_DIR\"\n\n\n#ensure old package is gone\nrm -f tesseract.dmg\n\n#make the directory which our disk image will be made of\n#use /tmp as a destination because copying ourself (xcode folder) whilst compiling causes the dog to chase its tail\nTESSPKG=`mktemp -d /tmp/tesspkg.XXXXXX` || exit 1\n\n#copy executable\nCpMac -r \"$TARGET_BUILD_DIR/tesseract.app\" \"$TESSPKG/Tesseract.app\"\nstrip -u -r \"$TESSPKG/Tesseract.app/Contents/MacOS/tesseract\"\n\nGAMEDIR=\"$TESSPKG/Tesseract.app/Contents/gamedata\"\nmkdir \"$GAMEDIR\"\n\n#copy readme and data and remove unneccesary stuff\nCpMac -r \"$SRCROOT/../../README\" \"$TESSPKG/README.txt\"\nCpMac -r \"$SRCROOT/../../doc\" \"$TESSPKG/docs\"\nCpMac -r \"$SRCROOT/../../config\" \"$GAMEDIR/\"\nCpMac -r \"$SRCROOT/../../media\" \"$GAMEDIR/\"\nCpMac -r \"$SRCROOT/../../src\" \"$TESSPKG/sourcecode\"\nfind \"$TESSPKG\" -name \".DS_Store\" -exec rm -f {} \\;\nrm -rf \"$TESSPKG/sourcecode/xcode/build\"\n\n#finally make a disk image out of the stuff\necho creating dmg\nhdiutil create -srcfolder \"$TESSPKG\" -volname tesseract tesseract.dmg\nhdiutil internet-enable -yes tesseract.dmg\n\n#cleanup\nrm -rf \"$TESSPKG\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B94198A709207E810029DAD1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D10F2F54111E23680004BCB9 /* Launcher.m in Sources */,
-				D10F2F55111E236C0004BCB9 /* main.m in Sources */,
 				D1FCB13618832B7500AFC227 /* callbacks.c in Sources */,
 				D1FCB13918832B7500AFC227 /* compress.c in Sources */,
 				D1FCB13D18832B7500AFC227 /* host.c in Sources */,
@@ -643,14 +577,6 @@
 				089C165DFE840E0CC02AAC07 /* English */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		B96D0D5A0920971300B6C936 /* MainMenu.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B96D0D5B0920971300B6C936 /* English */,
-			);
-			name = MainMenu.nib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
