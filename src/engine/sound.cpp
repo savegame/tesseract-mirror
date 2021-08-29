@@ -191,8 +191,12 @@ bool initaudio()
             }
         }
         drivers.deletearrays();
+        #ifdef WIN32
+            SDL_setenv("SDL_AUDIODRIVER", fallback, 1);
+        #else
+            unsetenv("SDL_AUDIODRIVER");
+        #endif
     }
-    SDL_setenv("SDL_AUDIODRIVER", fallback, 1);
     if(SDL_InitSubSystem(SDL_INIT_AUDIO) >= 0) return true;
     conoutf(CON_ERROR, "sound init failed: %s", SDL_GetError());
     return false;
