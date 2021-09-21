@@ -3048,7 +3048,7 @@ namespace server
                 {
                     ci->state.editstate = ci->state.state;
                     ci->state.state = CS_EDITING;
-                    ci->events.setsize(0);
+                    ci->events.deletecontents();
                     ci->state.projs.reset();
                 }
                 else ci->state.state = ci->state.editstate;
