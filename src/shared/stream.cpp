@@ -249,6 +249,7 @@ done:
 
 bool cubecaseequal(const char *s1, const char *s2, int n)
 {
+    if(!s1 || !s2) return false;
     while(n-- > 0)
     {
         int c1 = *s1++, c2 = *s2++;
@@ -260,6 +261,7 @@ bool cubecaseequal(const char *s1, const char *s2, int n)
 
 char *cubecasefind(const char *haystack, const char *needle)
 {
+    if(!haystack || !needle) return NULL;
     for(const char *h = haystack, *n = needle;;)
     {
         int hc = *h++, nc = *n++;
