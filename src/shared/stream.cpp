@@ -249,29 +249,29 @@ done:
 
 bool cubecaseequal(const char *s1, const char *s2, int n)
 {
-    if(!s1 || !s2) return false;
+    if(!s1 || !s2) return s1 == s2;
     while(n-- > 0)
     {
-        int c1 = *s1++, c2 = *s2++;
-        if(cubelower(c1) != cubelower(c2)) return false;
-        if(!c1) return true;
+        int c1 = cubelower(*s1++), c2 = cubelower(*s2++);
+        if(c1 != c2) return false;
+        if(!c1) break;
     }
     return true;
 }
 
 char *cubecasefind(const char *haystack, const char *needle)
 {
-    if(!haystack || !needle) return NULL;
-    for(const char *h = haystack, *n = needle;;)
+    if(haystack && needle) for(const char *h = haystack, *n = needle;;)
     {
-        int hc = *h++, nc = *n++;
+        int hc = cubelower(*h++), nc = cubelower(*n++);
         if(!nc) return (char*)h - (n - needle);
-        if(cubelower(hc) != cubelower(nc))
+        if(hc != nc)
         {
-            if(!hc) return NULL;
+            if(!hc) break;
             n = needle;
         }
     }
+    return NULL;
 }
 
 ///////////////////////// file system ///////////////////////
