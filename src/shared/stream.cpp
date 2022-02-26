@@ -258,12 +258,12 @@ bool cubecaseequal(const char *s1, const char *s2, int n)
     return true;
 }
 
-const char *cubecasefind(const char *haystack, const char *needle)
+char *cubecasefind(const char *haystack, const char *needle)
 {
     for(const char *h = haystack, *n = needle;;)
     {
         int hc = *h++, nc = *n++;
-        if(!nc) return h - (n - needle);
+        if(!nc) return (char*)h - (n - needle);
         if(cubelower(hc) != cubelower(nc))
         {
             if(!hc) return NULL;
