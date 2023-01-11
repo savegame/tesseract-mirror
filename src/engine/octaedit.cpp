@@ -2617,8 +2617,8 @@ void replace(bool insel, int oldtex, int newtex, const char *err)
 
 ICOMMAND(replace, "", (), replace(false, reptex, lasttex, "can only replace after a texture edit"));
 ICOMMAND(replacesel, "", (), replace(true, reptex, lasttex, "can only replace after a texture edit"));
-ICOMMAND(replacetex, "ii", (int *n, int *o), replace(false, *o, *n, "can only replace valid texture"));
-ICOMMAND(replacetexsel, "ii", (int *n, int *o), replace(true, *o, *n, "can only replace valid texture"));
+ICOMMAND(replacetex, "bb", (int *n, int *o), replace(false, *o, *n, "can only replace valid texture"));
+ICOMMAND(replacetexsel, "bb", (int *n, int *o), replace(true, *o, *n, "can only replace valid texture"));
 
 ////////// flip and rotate ///////////////
 static inline uint dflip(uint face) { return face==F_EMPTY ? face : 0x88888888 - (((face&0xF0F0F0F0)>>4) | ((face&0x0F0F0F0F)<<4)); }
