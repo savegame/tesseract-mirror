@@ -478,7 +478,7 @@ void sorteditmaterials()
 
 void rendermatgrid()
 {
-    enablepolygonoffset(GL_POLYGON_OFFSET_LINE);
+    enablepolygonoffset(GL_POLYGON_OFFSET_LINE, editmatoffset ? 1.0f : 2.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     int lastmat = -1;
     bvec4 color(0, 0, 0, 0);
