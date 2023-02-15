@@ -574,6 +574,7 @@ namespace game
     ICOMMAND(sauth, "", (), if(servauth[0]) tryauth(servauth));
     ICOMMAND(dauth, "s", (char *desc), if(desc[0]) tryauth(desc));
 
+    ICOMMAND(getservdesc, "", (), result(servdesc));
     ICOMMAND(getservauth, "", (), result(servauth));
 
     void togglespectator(int val, const char *who)
